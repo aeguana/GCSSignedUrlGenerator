@@ -9,7 +9,6 @@ import Crypto.PublicKey.RSA as RSA
 import Crypto.Signature.PKCS1_v1_5 as PKCS1_v1_5
 import OpenSSL
 import OpenSSL.crypto as SSL_Crypto
-import requests
 import urllib
 
 class GCSSignedUrlGenerator(object):
@@ -19,14 +18,10 @@ class GCSSignedUrlGenerator(object):
 			key_der: A PyCrypto private key in der format.
 			client_id_email: GCS service account email.
 			gcs_api_endpoint: Base URL for GCS API.
-			session: A requests.session.Session to use for issuing requests. If not
-				supplied, a new session is created.
 		"""
 		self._key_der = key_der
 		self._client_id_email = client_id_email
 		self._gcs_api_endpoint = gcs_api_endpoint
-
-		self.session = requests.Session()
 
 	def _base64Sign(self, plaintext):
 		"""Signs and returns a base64-encoded SHA256 digest."""
@@ -71,7 +66,7 @@ class GCSSignedUrlGenerator(object):
 		p = SSL_Crypto.load_pkcs12(p12_key, p12_passphrase)
 		self._key_der = OpenSSL.crypto.dump_privatekey(SSL_Crypto.FILETYPE_ASN1, p.get_privatekey())
 
-	def makeSignedUrl(self, path, method='GET' expiration=None):
+	def makeSignedUrl(self, path, method='GET', expiration=None):
 		"""Creates expiration timestamp for signed url and return ready signed url."""
 		if method not in ['GET', 'PUT', 'DELETE']:
 			raise Exception('Error', "Available methods: ['GET', 'PUT', 'DELETE']")
