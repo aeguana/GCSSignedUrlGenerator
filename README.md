@@ -18,6 +18,7 @@ CGSSignedUrlGenerator class provides easy method to generate signed URL's for Go
 
 ```
 $ mkdir GCSSigner
+$ cd GCSSigner
 $ virtualenv .
 $ source bin/activate
 $ git clone https://github.com/aeguana/GCSSignedUrlGenerator.git
