@@ -4,9 +4,10 @@ Authors:
 
 * (c) 2014-2014 Marcin Kawa, kawa@aeguana.com
 
-Sources:
+See sources:
 
 * [storage-signedurls-python](https://github.com/GoogleCloudPlatform/storage-signedurls-python) for basic methods of creating signed URLs
+* [GCS](https://cloud.google.com/storage/docs/accesscontrol) for Google Cloud Services Signed URLs documentation
 
 
 CGSSignedUrlGenerator class provides easy method to generate signed URL's for Google Cloud. You can use private key provided by google in .p12 format or .der format.
@@ -115,7 +116,7 @@ print signed_url
 	You have three choices ['GET', 'PUT', 'DELETE'], by default `GET` is set.
     You can change it when generating URL. It is not saved inside the object so if you want to generate few urls with `PUT` permission you need to pass `PUT` each time.
     
-    ```
+    ```python
     signed_url_get = signer.makeSignedUrl(file_path)
     signed_url_put = signer.makeSignedUrl(file_path, method='PUT')
     signed_url_delete = signer.makeSignedUrl(file_path, method='DELETE')
