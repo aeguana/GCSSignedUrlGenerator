@@ -22,6 +22,7 @@ class GCSSignedUrlGenerator(object):
 		self._key_der = key_der
 		self._client_id_email = client_id_email
 		self._gcs_api_endpoint = gcs_api_endpoint
+		self._expiration = None
 
 	def _base64Sign(self, plaintext):
 		"""Signs and returns a base64-encoded SHA256 digest."""
@@ -44,7 +45,7 @@ class GCSSignedUrlGenerator(object):
 			verb=verb,
 			content_md5=content_md5,
 			content_type=content_type,
-			expiration=self._expiration,
+			expiration=self._expiration_ts,
 			resource=path
 		)
 
@@ -55,7 +56,7 @@ class GCSSignedUrlGenerator(object):
 		signature_signed = self._base64Sign(signature_string)
 		query_params = {
 			'GoogleAccessId': self._client_id_email,
-			'Expires': str(self._expiration),
+			'Expires': str(self._expiration_ts),
 			'Signature': signature_signed
 		}
 
@@ -71,10 +72,13 @@ class GCSSignedUrlGenerator(object):
 		if method not in ['GET', 'PUT', 'DELETE']:
 			raise Exception('Error', "Available methods: ['GET', 'PUT', 'DELETE']")
 
-		if not expiration or not self._expiration:
-			self._expiration = expiration or (datetime.datetime.now() + datetime.timedelta(days=1))
-			self._expiration = int(time.mktime(self._expiration.timetuple()))
+		if expiration:
+			self._expiration = expiration
 
+		if not self._expiration:
+			self._expiration = expiration or (datetime.datetime.now() + datetime.timedelta(days=1))
+		
+		self._expiration_ts = int(time.mktime(self._expiration.timetuple()))
 		base_url, query_params = self._makeUrl(method, path)
 
 		return '%s?%s'%(base_url, urllib.urlencode(query_params))
